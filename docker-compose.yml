@@ -1,6 +1,6 @@
 services:
   migrate:
-    image: ghcr.io/Alexius25/wunschliste-migrate:latest
+    image: ghcr.io/alexius25/wunschliste-migrate:latest
 
     env_file:
       - .env.docker
@@ -9,7 +9,7 @@ services:
       - ./data:/app/data
 
   app:
-    image: ghcr.io/Alexius25/wunschliste-app:latest
+    image: ghcr.io/alexius25/wunschliste-app:latest
 
     env_file:
       - .env.docker

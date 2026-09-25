@@ -35,8 +35,8 @@ jobs:
           target: runner
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/wunschliste-app:latest
-            ghcr.io/${{ github.repository_owner }}/wunschliste-app:${{ github.sha }}
+            ghcr.io/alexius25/wunschliste-app:latest
+            ghcr.io/alexius25/wunschliste-app:${{ github.sha }}
 
       - name: Build and push migrator
         uses: docker/build-push-action@v6
@@ -46,5 +46,5 @@ jobs:
           target: migrator
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/wunschliste-migrate:latest
-            ghcr.io/${{ github.repository_owner }}/wunschliste-migrate:${{ github.sha }}
+            ghcr.io/alexius25/wunschliste-migrate:latest
+            ghcr.io/alexius25/wunschliste-migrate:${{ github.sha }}
