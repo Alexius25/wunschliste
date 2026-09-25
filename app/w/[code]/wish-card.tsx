@@ -1,13 +1,13 @@
 "use client"
 
-import { ExternalLink, Pencil, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { CalendarCheck, CalendarPlus, ExternalLink, Pencil, Trash2 } from "lucide-react"
 
+import { cancelReservation } from "@/app/actions/reservation"
+import { deleteWish } from "@/app/actions/wish"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
 import { AddWishDialog } from "./add-wish-dialog"
-
-import { deleteWish } from "@/app/actions/wish"
 import { useRouter } from "next/navigation"
 import {
     AlertDialog,
@@ -21,11 +21,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-import { CalendarCheck, CalendarPlus } from "lucide-react"
-
 import { ReserveWishDialog } from "./reserve-wish-dialog"
-
-import { cancelReservation } from "@/app/actions/reservation"
 
 interface WishCardProps {
     wishlistId: number
@@ -91,12 +87,10 @@ export function WishCard({
         <>
             <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="flex items-center gap-4 p-4">
-                    {/* Icon */}
                     <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-muted text-3xl">
                         {icon || "🎁"}
                     </div>
 
-                    {/* Inhalt */}
                     <div className="min-w-0 flex-1 text-left">
                         <h2 className="truncate font-semibold">{name}</h2>
 
@@ -113,13 +107,12 @@ export function WishCard({
                                 rel="noopener noreferrer"
                                 className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline"
                             >
-                                Zum Produkt
+                                Zum Produkt ({new URL(url).hostname})
                                 <ExternalLink className="size-3.5" />
                             </a>
                         )}
                     </div>
 
-                    {/* Preis + Aktionen */}
                     <div className="flex shrink-0 flex-col items-end gap-2">
                         {price !== null && (
                             <span className="text-lg font-semibold">

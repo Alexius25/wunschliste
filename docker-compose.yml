@@ -1,0 +1,27 @@
+services:
+  migrate:
+    image: ghcr.io/Alexius25/wunschliste-migrate:latest
+
+    env_file:
+      - .env.docker
+
+    volumes:
+      - ./data:/app/data
+
+  app:
+    image: ghcr.io/Alexius25/wunschliste-app:latest
+
+    env_file:
+      - .env.docker
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - ./data:/app/data
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    restart: unless-stopped

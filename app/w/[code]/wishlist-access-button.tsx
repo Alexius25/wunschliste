@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { Lock, LockOpen } from "lucide-react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { WishlistAccessPasswordDialog } from "./wishlist-access-password-dialoge"
+import { WishlistAccessPasswordDialog } from "./wishlist-access-password-dialog"
 
 interface WishlistAccessButtonProps {
     code: string
@@ -16,9 +16,14 @@ export function WishlistAccessButton({ code, canEdit }: WishlistAccessButtonProp
 
     return (
         <>
-            <Button variant="ghost" size="icon" disabled={canEdit} onClick={() => setOpen(true)}>
+            <Button
+                variant="ghost"
+                size="icon"
+                disabled={canEdit}
+                onClick={() => setOpen(true)}
+            >
                 {canEdit ? (
-                    <LockOpen className="size-4 " />
+                    <LockOpen className="size-4" />
                 ) : (
                     <Lock className="size-4" />
                 )}

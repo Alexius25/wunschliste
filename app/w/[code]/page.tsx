@@ -1,17 +1,23 @@
 import { db } from "@/lib/db"
-import { wishlistsTable, wishesTable } from "@/lib/db/schema"
+import { reservationsTable, wishlistsTable, wishesTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { notFound } from "next/navigation"
 
 import { hasWishlistEditAccess } from "@/lib/auth"
-import { WishlistAccessButton } from "./wishlist-access-button"
 import { AddWishButton } from "./add-wish-button"
-import { WishCard } from "./wish-card"
 import { EditWishlistButton } from "./edit-wishlist-button"
+import { WishCard } from "./wish-card"
+import { WishlistAccessButton } from "./wishlist-access-button"
 
 import { cookies } from "next/headers"
 import { createHash } from "node:crypto"
-import { reservationsTable } from "@/lib/db/schema"
+import { QRCodeDialog } from "./qr-code-dialog"
+import { ShareWishlistButton } from "./share-wishlist-button"
+import { ListPlus } from "lucide-react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+
+export const dynamic = "force-dynamic";
 
 interface WishlistPageProps {
     params: Promise<{
@@ -71,12 +77,28 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     })
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center px-4 py-2">
-            <div className="w-full rounded-lg border border-muted-foreground/10 bg-muted-foreground/5 p-4 text-center sm:w-2/3 lg:w-1/2">
+        <div className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+                <Button>
+                    <Link
+                        href="/c"
+                        className="inline-flex items-center gap-1 text-sm"
+                    >
+                        <ListPlus className="h-6 w-6" /> Eigene Liste erstellen
+                    </Link>
+                </Button>
+            </div>
+
+            <div className="mt-5 w-full rounded-lg border border-muted-foreground/10 bg-muted-foreground/5 p-4 text-center sm:w-2/3 lg:w-1/2">
                 <div className="mb-2 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">{wishlist.name}</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold">{wishlist.name}</h1>
+                    </div>
 
                     <div className="flex items-center gap-2">
+                        <ShareWishlistButton code={wishlist.code} />
+                        <QRCodeDialog code={wishlist.code} />
+
                         <WishlistAccessButton
                             code={wishlist.code}
                             canEdit={canEdit}
@@ -143,6 +165,14 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                         Bearbeitungsmodus aktiv
                     </p>
                 )}
+            </div>
+
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+                <p>
+                    Tipp: Klicke auf das Schloss und gebe das
+                    Bearbeitungspasswort ein, um Wünsche zu bearbeiten oder zu
+                    erstellen.
+                </p>
             </div>
         </div>
     )

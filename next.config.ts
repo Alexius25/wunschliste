@@ -1,10 +1,14 @@
 import type { NextConfig } from "next"
 
-const nextConfig: NextConfig = {}
+const nextConfig: NextConfig = {
+  output: "standalone",
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "1mb",
+    },
+  },
 
-module.exports = {
-  allowedDevOrigins: ['192.168.0.137'],
+  allowedDevOrigins: ["192.168.0.137"],
 }
-
 
 export default nextConfig

@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+
+database.db
+database.db-*
+data
+
+.env
+.env.*
+!.env.example
+
+npm-debug.log*

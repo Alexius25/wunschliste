@@ -1,9 +1,9 @@
-"use server";
+"use server"
 
-import { db } from "@/lib/db";
-import { wishesTable } from "@/lib/db/schema";
-import { hasWishlistEditAccess } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+import { db } from "@/lib/db"
+import { wishesTable } from "@/lib/db/schema"
+import { hasWishlistEditAccess } from "@/lib/auth"
+import { and, eq } from "drizzle-orm"
 
 export async function createWish(
     wishlistId: number,
@@ -13,10 +13,10 @@ export async function createWish(
     url: string,
     price: number | null
 ) {
-    const hasAccess = await hasWishlistEditAccess(wishlistId);
+    const hasAccess = await hasWishlistEditAccess(wishlistId)
 
     if (!hasAccess) {
-        throw new Error("Nicht autorisiert.");
+        throw new Error("Nicht autorisiert.")
     }
 
     const result = await db
@@ -29,9 +29,9 @@ export async function createWish(
             url: url || null,
             price,
         })
-        .returning();
+        .returning()
 
-    return result[0];
+    return result[0]
 }
 
 export async function updateWish(
@@ -43,10 +43,10 @@ export async function updateWish(
     url: string,
     price: number | null
 ) {
-    const hasAccess = await hasWishlistEditAccess(wishlistId);
+    const hasAccess = await hasWishlistEditAccess(wishlistId)
 
     if (!hasAccess) {
-        throw new Error("Nicht autorisiert.");
+        throw new Error("Nicht autorisiert.")
     }
 
     const result = await db
@@ -59,26 +59,29 @@ export async function updateWish(
             price,
         })
         .where(
-            eq(wishesTable.id, wishId)
+            and(
+                eq(wishesTable.id, wishId),
+                eq(wishesTable.wishlist_id, wishlistId)
+            )
         )
-        .returning();
+        .returning()
 
-    return result[0];
+    return result[0]
 }
 
-export async function deleteWish(
-    wishlistId: number,
-    wishId: number
-) {
-    const hasAccess = await hasWishlistEditAccess(wishlistId);
+export async function deleteWish(wishlistId: number, wishId: number) {
+    const hasAccess = await hasWishlistEditAccess(wishlistId)
 
     if (!hasAccess) {
-        throw new Error("Nicht autorisiert.");
+        throw new Error("Nicht autorisiert.")
     }
 
     await db
         .delete(wishesTable)
         .where(
-            eq(wishesTable.id, wishId)
-        );
+            and(
+                eq(wishesTable.id, wishId),
+                eq(wishesTable.wishlist_id, wishlistId)
+            )
+        )
 }
