@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { reservationsTable, wishlistsTable, wishesTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 
 import { hasWishlistEditAccess } from "@/lib/auth"
 import { AddWishButton } from "./add-wish-button"
@@ -16,13 +17,50 @@ import { ShareWishlistButton } from "./share-wishlist-button"
 import { ListPlus } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { WishlistHistory } from "./wishlist-history"
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
 
 interface WishlistPageProps {
     params: Promise<{
         code: string
     }>
+}
+
+export async function generateMetadata({
+    params,
+}: WishlistPageProps): Promise<Metadata> {
+    const { code } = await params
+
+    const wishlist = await db
+        .select()
+        .from(wishlistsTable)
+        .where(eq(wishlistsTable.code, code))
+        .get()
+
+    if (!wishlist) {
+        return {
+            title: "Wunschliste nicht gefunden",
+        }
+    }
+
+    return {
+        title: wishlist.name,
+        description: wishlist.description || "Eine geteilte Wunschliste",
+
+        openGraph: {
+            title: wishlist.name,
+            description: wishlist.description || "Eine geteilte Wunschliste",
+            type: "website",
+            url: `/w/${wishlist.code}`,
+        },
+
+        twitter: {
+            card: "summary",
+            title: wishlist.name,
+            description: wishlist.description || "Eine geteilte Wunschliste",
+        },
+    }
 }
 
 export default async function WishlistPage({ params }: WishlistPageProps) {
@@ -73,11 +111,14 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
             ...wish,
             isReserved: !!reservation,
             ownReservation,
+            reservationName: reservation?.name ?? null,
         }
     })
 
     return (
-        <div className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+        <div className="flex min-h-dvh flex-col items-center px-4 py-10">
+            <WishlistHistory code={wishlist.code} name={wishlist.name} />
+
             <div className="absolute top-4 right-4 flex items-center gap-2">
                 <Button>
                     <Link
@@ -90,12 +131,14 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
             </div>
 
             <div className="mt-5 w-full rounded-lg border border-muted-foreground/10 bg-muted-foreground/5 p-4 text-center sm:w-2/3 lg:w-1/2">
-                <div className="mb-2 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold">{wishlist.name}</h1>
+                <div className="mb-2 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                        <h1 className="wrap-break-words min-w-0 text-[clamp(1.25rem,5vw,2rem)] font-bold">
+                            {wishlist.name}
+                        </h1>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                         <ShareWishlistButton code={wishlist.code} />
                         <QRCodeDialog code={wishlist.code} />
 
@@ -116,11 +159,9 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
                 <hr className="my-4" />
 
-                {wishlist.description && (
-                    <p className="text-left text-muted-foreground">
-                        {wishlist.description}
-                    </p>
-                )}
+                <p className="wrap-break-words min-w-0 text-left whitespace-pre-wrap text-muted-foreground">
+                    {wishlist.description}
+                </p>
 
                 <div className="mt-6 space-y-3">
                     {wishes.length === 0 ? (
@@ -143,6 +184,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                                 canEdit={canEdit}
                                 isReserved={wish.isReserved}
                                 ownReservation={wish.ownReservation}
+                                reservationName={wish.reservationName}
                             />
                         ))
                     )}

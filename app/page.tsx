@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { VisitedWishlists } from "./visited-wishlists"
 
 export default function Page() {
     return (
@@ -7,8 +8,8 @@ export default function Page() {
                 <h1 className="text-2xl font-bold">Wunschliste</h1>
 
                 <p className="mt-2 text-muted-foreground">
-                    Erstelle deine Wunschliste und teile sie mit deinen Freunden
-                    und Familie.
+                    Erstelle deine Wunschliste und teile sie mit deinen
+                    Freunden und Familie.
                 </p>
 
                 <div className="mt-6 flex justify-center">
@@ -19,6 +20,8 @@ export default function Page() {
                         Wunschliste erstellen
                     </Link>
                 </div>
+
+                <VisitedWishlists />
             </div>
         </main>
     )

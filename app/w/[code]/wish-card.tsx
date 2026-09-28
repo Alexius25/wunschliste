@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { CalendarCheck, CalendarPlus, ExternalLink, Pencil, Trash2 } from "lucide-react"
+import {
+    CalendarCheck,
+    CalendarPlus,
+    ExternalLink,
+    Pencil,
+    Trash2,
+} from "lucide-react"
 
 import { cancelReservation } from "@/app/actions/reservation"
 import { deleteWish } from "@/app/actions/wish"
@@ -34,6 +40,7 @@ interface WishCardProps {
     canEdit: boolean
     isReserved: boolean
     ownReservation: boolean
+    reservationName: string | null
 }
 
 export function WishCard({
@@ -47,6 +54,7 @@ export function WishCard({
     canEdit,
     isReserved,
     ownReservation,
+    reservationName,
 }: WishCardProps) {
     const [editOpen, setEditOpen] = useState(false)
     const router = useRouter()
@@ -92,10 +100,12 @@ export function WishCard({
                     </div>
 
                     <div className="min-w-0 flex-1 text-left">
-                        <h2 className="truncate font-semibold">{name}</h2>
+                        <h2 className="font-semibold wrap-break-word whitespace-normal">
+                            {name}
+                        </h2>
 
                         {description && (
-                            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                            <p className="mt-1 text-sm wrap-break-word whitespace-normal text-muted-foreground">
                                 {description}
                             </p>
                         )}
@@ -156,31 +166,30 @@ export function WishCard({
                             </Button>
                         )}
 
-                        {isReserved && !ownReservation && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <CalendarCheck className="size-4" />
-                                Reserviert
-                            </div>
-                        )}
+                        {isReserved &&
+                            (ownReservation ? (
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-green-600">
+                                        Meine Reservierung
+                                    </span>
 
-                        {ownReservation && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-green-600">
-                                    Meine Reservierung
-                                </span>
-
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleCancelReservation}
-                                    disabled={canceling}
-                                >
-                                    {canceling
-                                        ? "Wird aufgehoben..."
-                                        : "Aufheben"}
-                                </Button>
-                            </div>
-                        )}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleCancelReservation}
+                                        disabled={canceling}
+                                    >
+                                        {canceling
+                                            ? "Wird aufgehoben..."
+                                            : "Aufheben"}
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <CalendarCheck className="size-4" />
+                                    Reserviert von {reservationName ?? "jemandem"}
+                                </div>
+                            ))}
                     </div>
                 </CardContent>
             </Card>
